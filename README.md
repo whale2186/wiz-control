@@ -9,7 +9,7 @@ A lightweight, high-performance controller and music synchronizer for WiZ Connec
 ## Highlights
 
 - ⚡ **Native GTK4 GUI (Go)**: Modern, clean, dark-themed control center built with GTK4 (`wiz-gtk`). Instant LAN discovery without local cache dependency.
-- 🪟 **Standalone Windows Builds**: Pre-compiled, zero-dependency `.exe` binaries (`WiZ-Control.exe` GUI and `wiz-cli.exe`).
+- 🪟 **Standalone Windows Builds**: Pre-compiled, zero-dependency `.exe` binaries with the exact same GTK4 dark UI styling (`WiZ-Control.exe` GUI and `wiz-cli.exe`).
 - 🎵 **Real-Time Music Synchronizer**: Syncs bulb color, brightness, and strobe effects with system or microphone audio using live FFT analysis (Beat Pulse, Energy Pulse, Spectrum, Hue Flow, and Disco modes).
 - 🚀 **Blazing Fast CLI**: Fast Go & Python CLI tools to scan, inspect, toggle, dim, color-pick, and set scenes on your lights from any terminal or script.
 - 📡 **Zero-Latency UDP Discovery**: Automatic subnet broadcast, `/proc/net/arp` inspection, and active sweep on port `38899`.
@@ -23,7 +23,7 @@ Pre-compiled standalone binaries are available on the [Releases](https://github.
 
 | Platform | Type | File | Description |
 | :--- | :--- | :--- | :--- |
-| **Windows x64** | GUI Application | `WiZ-Control-Windows-x64.zip` | Standalone portable `.exe`, no Python or dependencies required |
+| **Windows x64** | GUI Application | `WiZ-Control-Windows-x64.zip` | Standalone portable `.exe` with identical GTK4 dark design, no dependencies required |
 | **Windows x64** | Command-Line | `wiz-cli-Windows-x64.zip` | Lightweight standalone Go CLI executable (`wiz-cli.exe`) |
 | **Linux x86_64** | GTK4 GUI | `wiz-gtk-Linux-x86_64.tar.gz` | Native GTK4 dark-theme desktop application |
 | **Linux x86_64** | Command-Line | `wiz-cli-Linux-x86_64.tar.gz` | Standalone Go CLI tool (`wiz-cli`) |
