@@ -630,6 +630,55 @@ def build_parser():
     shortcut_parser = subparsers.add_parser("shortcut", help="Run a shortcut saved from the GUI.")
     shortcut_parser.add_argument("name", help="Shortcut name.")
 
+    music_parser = subparsers.add_parser("music", help="Synchronize saved lights to live music/audio.")
+    music_parser.add_argument(
+        "target",
+        nargs="?",
+        default="all",
+        help="Target device IP/name, room, group, or 'all' (default: all).",
+    )
+    music_parser.add_argument(
+        "--mode",
+        choices=("spectrum", "beat_pulse", "hue_flow", "chill_ambient", "disco"),
+        default="spectrum",
+        help="Visualizer mode (default: spectrum).",
+    )
+    music_parser.add_argument(
+        "--device",
+        type=int,
+        default=None,
+        help="Audio input device index.",
+    )
+    music_parser.add_argument(
+        "--sensitivity",
+        type=float,
+        default=1.0,
+        help="Audio sensitivity multiplier (default: 1.0).",
+    )
+    music_parser.add_argument(
+        "--min-brightness",
+        type=int,
+        default=10,
+        help="Minimum brightness (10-100, default: 10).",
+    )
+    music_parser.add_argument(
+        "--max-brightness",
+        type=int,
+        default=100,
+        help="Maximum brightness (10-100, default: 100).",
+    )
+    music_parser.add_argument(
+        "--duration",
+        type=float,
+        default=None,
+        help="Run duration in seconds.",
+    )
+    music_parser.add_argument(
+        "--list-audio-devices",
+        action="store_true",
+        help="List available audio input devices and exit.",
+    )
+
     return parser
 
 
@@ -748,6 +797,57 @@ def run_command(args, discovery=None):
         else:
             devices = _room_devices(data, shortcut["target"])
         return _send_state(discovery, devices, shortcut["state"], args.command_timeout, json_output=args.json_output)
+
+    if args.command == "music":
+        from wiz_music import get_audio_devices, run_cli_visualizer
+
+        if args.list_audio_devices:
+            devices = get_audio_devices()
+            if getattr(args, "json_output", False):
+                _print_json(devices)
+            else:
+                print(f"Found {len(devices)} audio input devices:\n")
+                for dev in devices:
+                    default_tag = " [DEFAULT]" if dev.get("is_default") else ""
+                    print(
+                        f"  [{dev['index']:2d}] {dev['name']}{default_tag} "
+                        f"({dev['channels']} ch, {int(dev['default_samplerate'])} Hz)"
+                    )
+            return 0
+
+        target = args.target
+        target_ips = []
+        if target == "all":
+            target_ips = list(data.get("devices", {}).keys())
+        else:
+            try:
+                device = _resolve_device(data, target)
+                target_ips = [device["ip"]]
+            except ValueError:
+                try:
+                    room_id = _resolve_room_id(data, target)
+                    target_ips = [d["ip"] for d in _room_devices(data, room_id)]
+                except ValueError:
+                    try:
+                        _, group = _resolve_group(data, target)
+                        target_ips = [d["ip"] for d in _group_devices(data, group)]
+                    except ValueError:
+                        target_ips = [target]
+
+        if not target_ips:
+            print(f"No target devices found for '{target}'.", file=sys.stderr)
+            return 1
+
+        run_cli_visualizer(
+            target_ips=target_ips,
+            mode=args.mode,
+            device_index=args.device,
+            sensitivity=args.sensitivity,
+            min_brightness=args.min_brightness,
+            max_brightness=args.max_brightness,
+            duration=args.duration,
+        )
+        return 0
 
     raise ValueError(f"Unknown command '{args.command}'.")
 

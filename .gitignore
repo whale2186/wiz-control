@@ -5,3 +5,9 @@ __pycache__/
 .codex-log/
 wiz_data.json
 wiz_data_*.json
+build/
+dist/
+*.spec
+wiz-gtk
+wiz_control.zip
+phone-gateway
