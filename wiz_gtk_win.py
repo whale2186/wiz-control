@@ -217,6 +217,15 @@ class WizGtkApp(ctk.CTk):
         self.minsize(420, 640)
         self.configure(fg_color="#12161f")
 
+        # Set Window Icon
+        base_dir = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+        icon_p = os.path.join(base_dir, "assets", "icon.ico")
+        if os.path.exists(icon_p):
+            try:
+                self.iconbitmap(icon_p)
+            except Exception:
+                pass
+
         # State
         self.client: Optional[BulbNetwork] = None
         self.discovered_bulbs: List[dict] = []
